@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGO Minifigure Collecting Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Adaptive UI scale. The layout is designed for ~1500x860 CSS px. On laptops
+        // with high Windows display scaling the browser viewport is much smaller
+        // (e.g. 1030x460 at 100% zoom), so the whole UI is scaled down to fit,
+        // the same way zooming the browser out would. Phones keep their own layout.
+        (function () {
+            var DESIGN_W = 1500, DESIGN_H = 860, MIN_SCALE = 0.6;
+            function applyScale() {
+                var w = window.innerWidth, h = window.innerHeight;
+                var z = w < 700 ? 1 : Math.max(MIN_SCALE, Math.min(1, w / DESIGN_W, h / DESIGN_H));
+                z = Math.round(z * 100) / 100;
+                var root = document.documentElement;
+                root.style.zoom = z === 1 ? '' : String(z);
+                root.style.setProperty('--vh1', (h / z / 100) + 'px');
+                root.style.setProperty('--vw1', (w / z / 100) + 'px');
+            }
+            applyScale();
+            window.addEventListener('resize', applyScale);
+        })();
+    </script>
+</head>
+
+<body>
+
+    <!-- Left-edge PC launcher button -->
+    <button id="pc-btn" class="pc-launcher-fixed">
+        <span class="pc-icon">PC</span>
+        <span class="pc-text">Computer</span>
+        <span id="email-unread-badge" class="unread-badge">0</span>
+    </button>
+
+    <!-- Save slot selection modal (shown at game start) -->
+    <div id="slot-modal" class="slot-modal-overlay">
+        <div class="slot-modal-content">
+            <h2>SELECT SAVE SLOT</h2>
+            <div class="slots-container">
+
+                <!-- Slot 1 -->
+                <div class="slot-card" data-slot="1">
+                    <div class="slot-header">SLOT 1</div>
+                    <div class="slot-info" id="slot-1-info"></div>
+                    <div class="slot-actions">
+                        <button class="slot-btn play-btn" onclick="selectSaveSlot(1)">PLAY</button>
+                        <button class="slot-btn delete-btn" onclick="deleteSaveSlot(1)">RESET</button>
+                    </div>
+                    <div class="slot-actions-secondary">
+                        <button class="slot-btn export-btn" onclick="exportSaveSlot(1)">Export</button>
+                        <button class="slot-btn import-btn" onclick="triggerImportSlot(1)">Import</button>
+                    </div>
+                </div>
+
+                <!-- Slot 2 -->
+                <div class="slot-card" data-slot="2">
+                    <div class="slot-header">SLOT 2</div>
+                    <div class="slot-info" id="slot-2-info"></div>
+                    <div class="slot-actions">
+                        <button class="slot-btn play-btn" onclick="selectSaveSlot(2)">PLAY</button>
+                        <button class="slot-btn delete-btn" onclick="deleteSaveSlot(2)">RESET</button>
+                    </div>
+                    <div class="slot-actions-secondary">
+                        <button class="slot-btn export-btn" onclick="exportSaveSlot(2)">Export</button>
+                        <button class="slot-btn import-btn" onclick="triggerImportSlot(2)">Import</button>
+                    </div>
+                </div>
+
+                <!-- Slot 3 -->
+                <div class="slot-card" data-slot="3">
+                    <div class="slot-header">SLOT 3</div>
+                    <div class="slot-info" id="slot-3-info"></div>
+                    <div class="slot-actions">
+                        <button class="slot-btn play-btn" onclick="selectSaveSlot(3)">PLAY</button>
+                        <button class="slot-btn delete-btn" onclick="deleteSaveSlot(3)">RESET</button>
+                    </div>
+                    <div class="slot-actions-secondary">
+                        <button class="slot-btn export-btn" onclick="exportSaveSlot(3)">Export</button>
+                        <button class="slot-btn import-btn" onclick="triggerImportSlot(3)">Import</button>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Hidden file picker for import; each slot's Import button triggers this -->
+            <input type="file" id="import-file-input" accept="application/json,.json" style="display:none;"
+                onchange="handleImportFileSelected(event)">
+        </div>
+    </div>
+
+    <!-- Top bar -->
+    <header class="top-bar">
+        <div class="top-left">
+            <div class="logo">Minifigure Vault</div>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="crates-tab">Blind Boxes</button>
+            <button class="tab-btn" data-tab="vault-tab">
+                Inventory <span id="vault-count-badge">0</span>
+            </button>
+        </nav>
+        <div class="user-balance">
+            Balance: <span id="user-coins">$200</span>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- Tab 1: Cases -->
+        <section id="crates-tab" class="tab-content active">
+
+            <div class="crates-section">
+                <h3>Available Blind Boxes</h3>
+                <div id="crates-list"></div>
+            </div>
+
+            <div class="controls-section">
+                <h2 id="selected-crate-title">Select a Blind Box</h2>
+
+                <div class="roulette-container">
+                    <div class="pointer"></div>
+                    <div class="roulette-wrapper">
+                        <div id="roulette-strip" class="roulette-strip"></div>
+                    </div>
+                </div>
+
+                <button id="spin-btn" disabled>Open Blind Box (<span id="crate-cost">0</span>$)</button>
+            </div>
+
+            <div class="crate-contents-section">
+                <h3>Blind Box Contents & Drop Odds</h3>
+                <div id="crate-contents-list" class="contents-grid"></div>
+            </div>
+
+        </section>
+
+        <!-- Tab 2: Inventory -->
+        <section id="vault-tab" class="tab-content">
+            <div class="vault-header">
+                <div class="vault-stats">
+                    <h2>Inventory</h2>
+                    <p>Total Inventory Value: <span id="vault-value">$0</span></p>
+                </div>
+
+                <!-- Inventory sort controls -->
+                <div class="sort-container">
+                    <label for="vault-sort-select">Sort By:</label>
+                    <select id="vault-sort-select" onchange="changeSortOrder(this.value)">
+                        <option value="collecting">Collecting Order</option>
+                        <option value="rarity">Rarity</option>
+                        <option value="value-desc">Value (Decreasing)</option>
+                        <option value="value-asc">Value (Increasing)</option>
+                    </select>
+                </div>
+
+                <button id="sell-all-btn" class="btn-sell-all" disabled>Sell All</button>
+            </div>
+            <div id="vault-grid" class="vault-grid"></div>
+        </section>
+
+    </main>
+
+    <!-- PC and Email app modal -->
+    <div id="pc-modal" class="modal">
+        <div class="modal-content pc-app-content">
+            <span class="close-btn" id="close-pc-modal-btn">&times;</span>
+            <div class="pc-window">
+                <!-- PC sidebar (apps) -->
+                <aside class="pc-sidebar">
+                    <div class="pc-title">SYSTEM OS</div>
+                    <button class="pc-app-btn active" data-app="email-app">
+                        📧 Mail <span id="pc-mail-badge" class="app-badge">0</span>
+                    </button>
+                    <button class="pc-app-btn" data-app="marketplace-app">
+                        🛒 Marketplace
+                    </button>
+                    <button class="pc-app-btn" data-app="market-app">
+                        📈 Market
+                    </button>
+                    <button class="pc-app-btn" data-app="offers-app">
+                        🤝 Collectors
+                    </button>
+                    <button class="pc-app-btn" data-app="auction-app">
+                        🔨 BrickBid Live
+                    </button>
+                    <button class="pc-app-btn" data-app="bank-app">
+                        🏦 Bank
+                    </button>
+                    <button class="pc-app-btn" data-app="achievements-app">
+                        🏆 Achievements
+                    </button>
+                    <button class="pc-app-btn" data-app="showcase-app">
+                        🖼️ Showcase
+                    </button>
+                    <button class="pc-app-btn" data-app="statistics-app">
+                        📊 Statistics
+                    </button>
+                    <!-- Notepad button -->
+                    <button class="pc-app-btn" data-app="notepad-app">
+                        📝 Notepad
+                    </button>
+                    <button class="pc-app-btn" data-app="settings-app">
+                        ⚙️ Settings
+                    </button>
+                </aside>
+
+                <!-- PC workspace -->
+                <div class="pc-viewport">
+                    <!-- Email application -->
+                    <div id="email-app" class="pc-app-view active">
+                        <div class="email-layout">
+                            <div class="email-sidebar-container"
+                                style="display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); width: 35%;">
+
+                                <!-- Mail header and Delete All button -->
+                                <div
+                                    style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.4);">
+                                    <strong style="font-size: 0.9rem; color: #cbd5e1;">Inbox</strong>
+                                    <button onclick="deleteAllCustomEmails()" class="btn"
+                                        style="background-color: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.4); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;">Delete
+                                        All</button>
+                                </div>
+
+                                <div class="email-list" id="email-list" style="flex: 1; overflow-y: auto; width: 100%;">
+                                    <!-- Emails are populated here by JS -->
+                                </div>
+                            </div>
+                            <div class="email-reader" id="email-reader"
+                                style="flex: 1; overflow-y: auto; padding: 20px;">
+                                <div class="email-empty-state">Select an email to read</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Marketplace application (mystery bundles) -->
+                    <div id="marketplace-app" class="pc-app-view">
+                        <div
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+                            <h3 style="color: #f8fafc; margin-bottom: 5px; font-size: 1.2rem;">Marketplace Mystery
+                                Boxes</h3>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Get random minifigures
+                                directly from the entire database pool!</p>
+
+                            <div class="marketplace-bundles-grid"
+                                style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+
+                                <!-- 3-figure pack -->
+                                <div
+                                    style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+
+                                        <h4 style="color: #fff; margin-bottom: 5px; font-size: 1.1rem;">3-Figure Bundle
+                                        </h4>
+                                        <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px;">Contains 3
+                                            random minifigures from the full database.</p>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: #2ecc71; font-weight: bold; font-size: 1.4rem; margin-bottom: 12px;">
+                                            $60</div>
+                                        <button class="btn btn-primary"
+                                            style="width: 100%; padding: 10px; background: #3b82f6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                            onclick="buyMysteryBundle('bundle_3')">Buy Bundle</button>
+                                    </div>
+                                </div>
+
+                                <!-- 5-figure pack -->
+                                <div
+                                    style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+
+                                        <h4 style="color: #fff; margin-bottom: 5px; font-size: 1.1rem;">5-Figure Bundle
+                                        </h4>
+                                        <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px;">Contains 5
+                                            random minifigures from the full database.</p>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: #2ecc71; font-weight: bold; font-size: 1.4rem; margin-bottom: 12px;">
+                                            $80</div>
+                                        <button class="btn btn-primary"
+                                            style="width: 100%; padding: 10px; background: #3b82f6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                            onclick="buyMysteryBundle('bundle_5')">Buy Bundle</button>
+                                    </div>
+                                </div>
+
+                                <!-- 10-figure pack -->
+                                <div
+                                    style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+
+                                        <h4 style="color: #fff; margin-bottom: 5px; font-size: 1.1rem;">10-Figure Bundle
+                                        </h4>
+                                        <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px;">Contains 10
+                                            random minifigures from the full database.</p>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: #2ecc71; font-weight: bold; font-size: 1.4rem; margin-bottom: 12px;">
+                                            $180</div>
+                                        <button class="btn btn-primary"
+                                            style="width: 100%; padding: 10px; background: #3b82f6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                            onclick="buyMysteryBundle('bundle_10')">Buy Bundle</button>
+                                    </div>
+                                </div>
+
+                                <!-- 15-figure pack -->
+                                <div
+                                    style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <div
+                                            style="font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 10px;">
+                                            15</div>
+                                        <h4 style="color: #fff; margin-bottom: 5px; font-size: 1.1rem;">15-Figure Bundle
+                                        </h4>
+                                        <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px;">Contains 15
+                                            random minifigures from the full database.</p>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: #2ecc71; font-weight: bold; font-size: 1.4rem; margin-bottom: 12px;">
+                                            $250</div>
+                                        <button class="btn btn-primary"
+                                            style="width: 100%; padding: 10px; background: #3b82f6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                            onclick="buyMysteryBundle('bundle_15')">Buy Bundle</button>
+                                    </div>
+                                </div>
+
+                                <!-- 20-figure pack -->
+                                <div
+                                    style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <div
+                                            style="font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 10px;">
+                                            20</div>
+                                        <h4 style="color: #fff; margin-bottom: 5px; font-size: 1.1rem;">20-Figure Bundle
+                                        </h4>
+                                        <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px;">Contains 20
+                                            random minifigures from the full database.</p>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: #2ecc71; font-weight: bold; font-size: 1.4rem; margin-bottom: 12px;">
+                                            $320</div>
+                                        <button class="btn btn-primary"
+                                            style="width: 100%; padding: 10px; background: #3b82f6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                            onclick="buyMysteryBundle('bundle_20')">Buy Bundle</button>
+                                    </div>
+                                </div>
+
+                                <!-- 30-figure pack -->
+                                <div
+                                    style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <div
+                                            style="font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 10px;">
+                                            30</div>
+                                        <h4 style="color: #fff; margin-bottom: 5px; font-size: 1.1rem;">30-Figure Bundle
+                                        </h4>
+                                        <p style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px;">Contains 30
+                                            random minifigures from the full database.</p>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: #2ecc71; font-weight: bold; font-size: 1.4rem; margin-bottom: 12px;">
+                                            $440</div>
+                                        <button class="btn btn-primary"
+                                            style="width: 100%; padding: 10px; background: #3b82f6; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                            onclick="buyMysteryBundle('bundle_30')">Buy Bundle</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collector Offers application -->
+                    <div id="offers-app" class="pc-app-view">
+                        <div
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                                <h3 style="color: #fff; font-size: 1.05rem; margin: 0;">Collector Offers</h3>
+                                <span id="offers-refresh-progress" style="color: #94a3b8; font-size: 0.78rem;"></span>
+                            </div>
+
+                            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                                <button id="offers-subtab-single-btn" class="offers-subtab-btn active"
+                                    onclick="switchOffersSubtab('single')">Single Requests</button>
+                                <button id="offers-subtab-multi-btn" class="offers-subtab-btn"
+                                    onclick="switchOffersSubtab('multi')">Multi Requests</button>
+                            </div>
+
+                            <div id="offers-single-view">
+                                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 16px 0;">Other collectors are
+                                    looking for specific figures to complete their own sets. Fulfill a request to earn
+                                    more than market value.</p>
+                                <div id="offers-app-list"></div>
+                            </div>
+
+                            <div id="offers-multi-view" style="display: none;">
+                                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 16px 0;">Some collectors need a
+                                    whole set of different figures at once. Harder to fulfill, but they pay a bigger
+                                    bonus for it.</p>
+                                <div id="offers-app-multi-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collector Market (price fluctuation) application -->
+                    <div id="market-app" class="pc-app-view">
+                        <div
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto; overflow-x: hidden;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="color: #fff; font-size: 1.05rem; margin: 0;">Collector Market</h3>
+                                <span id="market-refresh-progress" style="color: #94a3b8; font-size: 0.78rem;"></span>
+                            </div>
+                            <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 16px 0;">Figure values shift over
+                                time based on collector demand. Sometimes big news moves an entire theme. Check your
+                                inbox.</p>
+
+                            <div id="market-conditions-panel" style="margin-bottom: 18px;"></div>
+
+                            <div
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                                <div style="min-width: 0;">
+                                    <h4 style="color: #2ecc71; font-size: 0.85rem; margin: 0 0 8px 0;">Top Gainers
+                                    </h4>
+                                    <div id="market-gainers-list"></div>
+                                </div>
+                                <div style="min-width: 0;">
+                                    <h4 style="color: #e74c3c; font-size: 0.85rem; margin: 0 0 8px 0;">Top Losers
+                                    </h4>
+                                    <div id="market-losers-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements application -->
+                    <div id="achievements-app" class="pc-app-view">
+                        <div
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <h3 style="color: #fff; font-size: 1.05rem; margin: 0;">🏆 Achievements</h3>
+                                <span id="achievements-progress" style="color: #94a3b8; font-size: 0.78rem;"></span>
+                            </div>
+                            <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 16px 0;">Unlock badges by playing —
+                                some come with a bonus reward.</p>
+                            <div id="achievements-grid"
+                                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Showcase application -->
+                    <div id="showcase-app" class="pc-app-view">
+                        <div
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <h3 style="color: #fff; font-size: 1.05rem; margin: 0;">Showcase</h3>
+                                <span id="showcase-progress" style="color: #94a3b8; font-size: 0.78rem;"></span>
+                            </div>
+                            <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 12px 0;">Set aside your favorite
+                                figures for good, purely for pride, not for profit. Showcased figures can't be sold.
+                            </p>
+
+                            <div id="theme-mastery-panel" style="margin-bottom: 18px;"></div>
+
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+                                <select id="showcase-sort-select" onchange="changeShowcaseSortMode(this.value)"
+                                    style="background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem;">
+                                    <option value="collecting">Sort: Recently Added</option>
+                                    <option value="rarity">Sort: Rarity</option>
+                                    <option value="value-desc">Sort: Value (High → Low)</option>
+                                    <option value="value-asc">Sort: Value (Low → High)</option>
+                                </select>
+                            </div>
+                            <div id="showcase-slots-grid"
+                                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BrickBid Live (auction) application -->
+                    <div id="auction-app" class="pc-app-view">
+                        <div id="auction-app-content"
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+                        </div>
+                    </div>
+
+                    <!-- Statistics application -->
+                    <div id="statistics-app" class="pc-app-view">
+                        <div id="statistics-app-content"
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+                        </div>
+                    </div>
+
+                    <!-- Bank application -->
+                    <div id="bank-app" class="pc-app-view">
+                        <div id="bank-app-content">
+                            <!-- Bank cards and debt status are populated here by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Notepad application (life plan and $75k goal) -->
+                    <div id="notepad-app" class="pc-app-view">
+                        <div class="notepad-container"
+                            style="display: flex; flex-direction: column; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; gap: 15px;">
+
+                            <div
+                                style="background: rgba(255, 202, 40, 0.08); border: 1px solid rgba(255, 202, 40, 0.3); padding: 16px; border-radius: 10px;">
+                                <h3 style="color: #ffca28; margin-bottom: 8px; font-size: 1.1rem;">Personal Goal
+                                    Notepad</h3>
+                                <p style="color: #ccc; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                                    "I have to cover my mom's surgery costs, send her on vacation, and help her retire
+                                    by opening
+                                    that bookstore, which is her biggest dream. In total, I need to
+                                    save **$75,000**."
+                                </p>
+                            </div>
+
+                            <div
+                                style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 10px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h4 style="color: #fff; font-size: 1rem; margin: 0;">75K The Big Goal Progress Bar
+                                    </h4>
+                                    <span style="color: #2ecc71; font-weight: bold;" id="goal-progress-text">$0 /
+                                        $75,000</span>
+                                </div>
+
+                                <div
+                                    style="width: 100%; background: rgba(0,0,0,0.3); height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 15px;">
+                                    <div id="goal-progress-bar"
+                                        style="width: 0%; height: 100%; background: #2ecc71; transition: width 0.4s ease;">
+                                    </div>
+                                </div>
+
+                                <!-- Expense list -->
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div
+                                        style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong style="color: #e74c3c; font-size: 0.9rem;">1. My mom's
+                                                surgery</strong>
+                                            <div style="font-size: 0.8rem; color: #888;">Hernia surgery and hospital
+                                                expenses</div>
+                                        </div>
+                                        <span style="font-weight: bold; color: #fff;">$25,000</span>
+                                    </div>
+
+                                    <div
+                                        style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong style="color: #3498db; font-size: 0.9rem;">2. A Break to Boost
+                                                Morale</strong>
+                                            <div style="font-size: 0.8rem; color: #888;">Post-surgery recovery vacation
+                                            </div>
+                                        </div>
+                                        <span style="font-weight: bold; color: #fff;">$10,000</span>
+                                    </div>
+
+                                    <div
+                                        style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong style="color: #f1c40f; font-size: 0.9rem;">3. Retirement & Bookstore
+                                            </strong>
+                                            <div style="font-size: 0.8rem; color: #888;">Retire her and let her run the
+                                                bookstore. Bookstore : buying and initial
+                                                capital </div>
+                                        </div>
+                                        <span style="font-weight: bold; color: #fff;">$40,000</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Settings application -->
+                    <div id="settings-app" class="pc-app-view">
+                        <div
+                            style="padding: 20px; box-sizing: border-box; width: 100%; height: 100%; flex: 1; overflow-y: auto;">
+
+                            <div
+                                style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 10px; margin-bottom: 16px;">
+                                <h4 style="color: #fff; font-size: 1rem; margin: 0 0 14px 0;">Sound</h4>
+
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <label for="settings-volume-slider"
+                                        style="color: #cbd5e1; font-size: 0.85rem; min-width: 90px;">Volume</label>
+                                    <input type="range" id="settings-volume-slider" min="0" max="100" value="70"
+                                        style="flex: 1;">
+                                    <span id="settings-volume-value"
+                                        style="color: #38ef7d; font-weight: bold; font-size: 0.85rem; min-width: 36px; text-align: right;">70%</span>
+                                </div>
+
+                                <label
+                                    style="display: flex; align-items: center; gap: 8px; color: #cbd5e1; font-size: 0.85rem; cursor: pointer;">
+                                    <input type="checkbox" id="settings-mute-toggle">
+                                    Mute all sounds
+                                </label>
+                            </div>
+
+                            <div
+                                style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 10px; margin-bottom: 16px;">
+                                <h4 style="color: #fff; font-size: 1rem; margin: 0 0 14px 0;">Display</h4>
+                                <label
+                                    style="display: flex; align-items: center; gap: 8px; color: #cbd5e1; font-size: 0.85rem; cursor: pointer;">
+                                    <input type="checkbox" id="settings-reduce-motion-toggle">
+                                    Reduce motion (disable pop-in / flashy reveal animations)
+                                </label>
+                            </div>
+
+                            <div
+                                style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 10px; margin-bottom: 16px;">
+                                <h4 style="color: #fff; font-size: 1rem; margin: 0 0 14px 0;">Current Save</h4>
+                                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 12px 0;">Quickly back up or
+                                    restore the save you're currently playing, without leaving the game.</p>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="slot-btn export-btn" style="flex:1;"
+                                        onclick="exportCurrentSlot()">Export Current Save</button>
+                                    <button class="slot-btn import-btn" style="flex:1;"
+                                        onclick="importCurrentSlot()">Import to Current Save</button>
+                                </div>
+                            </div>
+
+                            <div
+                                style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 10px;">
+                                <h4 style="color: #fff; font-size: 1rem; margin: 0 0 14px 0;">Other</h4>
+                                <button class="slot-btn delete-btn" style="width:100%;"
+                                    onclick="returnToSlotSelection()">Return to Slot Selection</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspect modal -->
+    <!-- Bundle reveal modal (reveals pack contents one at a time) -->
+    <!-- BrickBid: sell item setup modal -->
+    <div id="auction-sell-modal" class="modal"
+        style="display: none; z-index: 10007; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center;">
+        <div
+            style="background: #1e293b; border: 1px solid rgba(255,215,0,0.3); border-radius: 16px; padding: 26px; width: 400px; max-width: calc(var(--vw1, 1vw) * 90); max-height: calc(var(--vh1, 1vh) * 80); overflow-y: auto; color: #fff; box-shadow: 0 20px 45px rgba(0,0,0,0.55);">
+            <h3 style="margin: 0 0 4px 0; font-size: 1.1rem; color: #ffd700;">List an Item for Auction</h3>
+            <div id="auction-sell-modal-body" style="margin-top: 14px;"></div>
+            <button onclick="closeAuctionSellModal()" type="button"
+                style="margin-top: 14px; width: 100%; padding: 10px; border: none; border-radius: 8px; background: #334155; color: #f1f5f9; font-weight: bold; cursor: pointer;">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Showcase picker modal -->
+    <div id="showcase-picker-modal" class="modal"
+        style="display: none; z-index: 10006; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center;">
+        <div
+            style="background: #1e293b; border: 1px solid rgba(255,215,0,0.3); border-radius: 16px; padding: 26px; width: 380px; max-width: calc(var(--vw1, 1vw) * 90); max-height: calc(var(--vh1, 1vh) * 75); display: flex; flex-direction: column; color: #fff; box-shadow: 0 20px 45px rgba(0,0,0,0.55);">
+            <h3 style="margin: 0 0 4px 0; font-size: 1.1rem; color: #ffd700;">Choose a Figure</h3>
+            <p style="color: #94a3b8; font-size: 0.78rem; margin: 0 0 14px 0;">Pick a figure from your vault to place in
+                this Showcase slot.</p>
+            <div id="showcase-picker-list" style="overflow-y: auto; flex: 1;"></div>
+            <button onclick="closeShowcasePicker()" type="button"
+                style="margin-top: 14px; width: 100%; padding: 10px; border: none; border-radius: 8px; background: #334155; color: #f1f5f9; font-weight: bold; cursor: pointer;">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Daily login reward modal -->
+    <div id="daily-reward-modal" class="modal"
+        style="display: none; z-index: 10005; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center;">
+        <div
+            style="background: linear-gradient(180deg, #1e293b 0%, #161d2b 100%); border: 1px solid rgba(255,255,255,0.15); border-radius: 18px; padding: 34px; width: 620px; max-width: calc(var(--vw1, 1vw) * 94); text-align: center; color: #fff; box-shadow: 0 25px 60px rgba(0,0,0,0.6);">
+
+            <div id="daily-reward-icon" style="font-size: 3.4rem; margin-bottom: 10px;"></div>
+            <h2 id="daily-reward-title" style="margin: 0 0 8px 0; font-size: 1.7rem;">Daily Login Bonus</h2>
+            <p id="daily-reward-subtitle" style="color: #a8b4c7; font-size: 0.98rem; margin: 0 0 22px 0;">Come back
+                every day for bigger rewards!</p>
+
+            <div id="daily-reward-amount"
+                style="font-size: 2.8rem; font-weight: bold; color: #38ef7d; margin-bottom: 26px;">+$0</div>
+
+            <div id="daily-reward-calendar"
+                style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 26px;"></div>
+
+            <button id="daily-reward-close-btn" type="button"
+                style="width: 100%; padding: 14px; border: none; border-radius: 10px; background: #2ecc71; color: #06210f; font-weight: bold; font-size: 1.05rem; cursor: pointer;">
+                Awesome!
+            </button>
+        </div>
+    </div>
+
+    <div id="bundle-reveal-modal" class="modal"
+        style="display: none; z-index: 10001; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; cursor: pointer;">
+        <div id="bundle-reveal-box"
+            style="background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 30px; width: 380px; text-align: center; color: #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: width 0.2s ease;">
+
+            <!-- Single-reveal view -->
+            <div id="bundle-reveal-single-view">
+                <div id="bundle-reveal-progress"
+                    style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px; letter-spacing: 0.5px;">1 / 5</div>
+                <div id="bundle-reveal-card-wrap"
+                    style="min-height: 260px; display: flex; align-items: center; justify-content: center;">
+                    <div id="bundle-reveal-card" class="minifig-card bundle-reveal-card">
+                        <img id="bundle-reveal-img" src="" alt="">
+                        <div class="name" id="bundle-reveal-name">-</div>
+                    </div>
+                </div>
+                <span id="bundle-reveal-rarity" class="rarity-badge" style="margin-top: 10px;">Common</span>
+                <div id="bundle-reveal-value" style="margin-top: 8px; font-weight: bold; color: #38ef7d;">$0</div>
+                <button id="bundle-reveal-auto-btn" type="button" tabindex="-1"
+                    style="margin-top: 16px; background: #334155; color: #f1f5f9; border: 1px solid rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
+                    ▶ Auto Open
+                </button>
+                <div id="bundle-reveal-hint" style="margin-top: 10px; font-size: 0.8rem; color: #64748b;">Click to
+                    reveal the next one</div>
+            </div>
+
+            <!-- Result / overview view: all figures shown in order -->
+            <div id="bundle-reveal-overview-view" style="display: none; cursor: default;">
+                <div style="font-size: 1.05rem; font-weight: bold; margin-bottom: 14px;">Pack Summary</div>
+                <div id="bundle-reveal-overview-grid"
+                    style="display: grid; gap: 10px; padding-right: 4px; max-height: calc(var(--vh1, 1vh) * 55); overflow-y: auto;">
+                </div>
+                <button id="bundle-reveal-continue-btn" type="button" tabindex="-1"
+                    style="margin-top: 18px; width: 100%; background: #2ecc71; color: #06210f; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                    Continue
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="inspect-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal-btn" class="close-btn">&times;</span>
+            <img id="modal-img" src="" alt="">
+            <h2 id="modal-title">Name</h2>
+            <span id="modal-rarity" class="rarity-badge">Common</span>
+
+            <div class="modal-info">
+                <p><strong>Series:</strong> <span id="modal-series">-</span></p>
+                <p><strong>Base Value:</strong> <span id="modal-value">$0</span></p>
+                <p><strong>Current Market Value:</strong> <span id="modal-current-value">$0</span> <span
+                        id="modal-market-change"></span></p>
+                <p id="modal-count-container"><strong>Owned Quantity:</strong> <span id="modal-count">x0</span></p>
+            </div>
+
+            <button id="modal-showcase-btn"
+                style="display:none; width:100%; margin-top:10px; padding:9px; border:1px solid rgba(255,215,0,0.4); border-radius:6px; background:rgba(255,215,0,0.1); color:#ffd700; font-weight:bold; font-size:0.85rem; cursor:pointer;">
+                Add to Showcase
+            </button>
+            <p id="modal-showcase-note" style="display:none; color:#ffd700; font-size:0.78rem; margin-top:8px;">One
+                copy is reserved in your Showcase and can't be sold.</p>
+
+            <!-- Quantity selection and sell controls -->
+            <div id="modal-sell-controls" style="display: none; margin-top: 15px; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <label for="sell-quantity-input" style="font-weight: bold; font-size: 14px;">Sell Amount:</label>
+                    <input type="number" id="sell-quantity-input" min="1" value="1"
+                        style="width: 70px; padding: 5px; border-radius: 4px; border: 1px solid #444; background: #1e1e1e; color: #fff; text-align: center;">
+                </div>
+
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                    <button id="modal-sell-custom-btn" class="action-btn" style="background-color: #27ae60;">Sell
+                        Selected ($<span id="custom-sell-price">0</span>)</button>
+                    <button id="modal-sell-all-btn" class="action-btn" style="background-color: #e74c3c;">Sell All
+                        Stack</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win game modal -->
+    <div id="win-modal" class="modal"
+        style="display: none; z-index: 10000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center;">
+        <div
+            style="background: #1e293b; border: 2px solid #2ecc71; border-radius: 16px; padding: 30px; max-width: 500px; text-align: center; color: #fff; box-shadow: 0 15px 35px rgba(46, 204, 113, 0.3);">
+            <h1 class="win-title" style="color: #2ecc71; font-size: 2rem; margin-bottom: 15px;">You have reached your
+                goal!</h1>
+            <p style="font-size: 1.05rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 25px;">
+                Congratulations! You’ve successfully saved $75,000 without going into debt. Now you can pay for your
+                mom’s surgery,
+                send her on vacation, and help her open the bookstore of her dreams!
+            </p>
+            <button onclick="returnToSlotSelection()"
+                style="background: #2ecc71; color: #fff; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: background 0.2s;">
+                Main Menu
+            </button>
+        </div>
+    </div>
+
+    <!-- Game over modal -->
+    <div id="game-over-modal" class="modal"
+        style="display: none; z-index: 10000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center;">
+        <div
+            style="background: #1e293b; border: 2px solid #e74c3c; border-radius: 16px; padding: 30px; max-width: 500px; text-align: center; color: #fff; box-shadow: 0 15px 35px rgba(231, 76, 60, 0.3);">
+            <h1 style="color: #e74c3c; font-size: 2rem; margin-bottom: 15px;">BANKRUPT!</h1>
+            <p style="font-size: 1.05rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 25px;">
+                Your overdue debt has exceeded the limit ($6000)! You are now facing legal actions from the bank.
+            </p>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="resetCurrentSlot()"
+                    style="background: #e74c3c; color: #fff; border: none; padding: 12px 20px; font-weight: bold; border-radius: 8px; cursor: pointer;">
+                    Slotu Sıfırla
+                </button>
+                <button onclick="returnToSlotSelection()"
+                    style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; font-weight: bold; border-radius: 8px; cursor: pointer;">
+                    Main Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // If a minifigure image fails to load (e.g. the image host is down), show a neutral placeholder instead of a broken icon.
+        const FIG_PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 100"><rect x="18" y="4" width="24" height="22" rx="6" fill="#8a94a6"/><rect x="10" y="30" width="40" height="34" rx="4" fill="#8a94a6"/><rect x="12" y="66" width="16" height="30" rx="3" fill="#8a94a6"/><rect x="32" y="66" width="16" height="30" rx="3" fill="#8a94a6"/></svg>');
+        window.addEventListener('error', e => {
+            const img = e.target;
+            if (img && img.tagName === 'IMG' && img.src !== FIG_PLACEHOLDER) img.src = FIG_PLACEHOLDER;
+        }, true);
+    </script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Handles switching between PC app tabs (Mail / Marketplace / Bank / Notepad / etc.)
+        document.addEventListener('DOMContentLoaded', () => {
+            const pcAppBtns = document.querySelectorAll('.pc-app-btn');
+            const pcAppViews = document.querySelectorAll('.pc-app-view');
+
+            pcAppBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetApp = btn.getAttribute('data-app');
+
+                    pcAppBtns.forEach(b => b.classList.remove('active'));
+                    pcAppViews.forEach(v => v.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    const targetView = document.getElementById(targetApp);
+                    if (targetView) targetView.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

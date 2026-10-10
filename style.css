@@ -1,0 +1,1973 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #111317;
+    color: #fff;
+    min-height: calc(var(--vh1, 1vh) * 100);
+}
+
+/* Large PC launcher button, fixed to the left edge, vertically centered */
+.pc-launcher-fixed {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 99;
+    background: #181b22;
+    color: #ffca28;
+    border: 2px solid #ffca28;
+    border-left: none;
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 202, 40, 0.2);
+    transition: all 0.25s ease;
+}
+
+.pc-launcher-fixed:hover {
+    background: #ffca28;
+    color: #111;
+    padding-left: 26px;
+    box-shadow: 6px 0 25px rgba(255, 202, 40, 0.5);
+}
+
+.pc-launcher-fixed .pc-icon {
+    font-size: 1.8rem;
+}
+
+.pc-launcher-fixed .pc-text {
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+}
+
+.unread-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #e74c3c;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 12px;
+    border: 2px solid #111317;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #181b22;
+    border-bottom: 2px solid #282c37;
+}
+
+.top-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: #ffca28;
+}
+
+.app-badge {
+    background: #e74c3c;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-btn {
+    background: #232733;
+    color: #a0a5b5;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+    background: #ffca28;
+    color: #111;
+}
+
+#vault-count-badge {
+    background: #e74c3c;
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+.user-balance {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2ecc71;
+}
+
+.tab-content {
+    display: none;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Sort dropdown */
+.sort-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #111317;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #282c37;
+}
+
+.sort-container label {
+    font-size: 0.85rem;
+    color: #a0a5b5;
+    font-weight: 600;
+}
+
+#vault-sort-select {
+    background: #181b22;
+    color: #ffca28;
+    border: 1px solid #282c37;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+
+#vault-sort-select:hover {
+    border-color: #ffca28;
+}
+
+/* PC MODAL & EMAIL APP STYLES */
+.pc-app-content {
+    max-width: 900px !important;
+    width: 95% !important;
+    height: 550px;
+    padding: 0 !important;
+    overflow: hidden;
+    background: #111317 !important;
+}
+
+.pc-window {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.pc-sidebar {
+    width: 180px;
+    background: #181b22;
+    border-right: 1px solid #282c37;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
+
+.pc-title {
+    font-weight: 800;
+    color: #888;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.pc-app-btn {
+    background: #232733;
+    color: #ccc;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: left;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pc-app-btn.active {
+    background: #ffca28;
+    color: #111;
+}
+
+.pc-viewport {
+    flex: 1;
+    display: flex;
+    background: #111317;
+}
+
+.pc-app-view {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.pc-app-view.active {
+    display: flex;
+}
+
+/* EMAIL INTERFACE */
+.email-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.email-list {
+    width: 320px;
+    border-right: 1px solid #282c37;
+    overflow-y: auto;
+    background: #151821;
+}
+
+.email-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #282c37;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.email-item:hover {
+    background: #1f2330;
+}
+
+.email-item.selected {
+    background: #282c37;
+}
+
+.email-item.unread .email-item-subject {
+    font-weight: 800;
+    color: #ffca28;
+}
+
+.email-item-sender {
+    font-size: 0.85rem;
+    color: #2ecc71;
+    margin-bottom: 4px;
+}
+
+.email-item-subject {
+    font-size: 0.9rem;
+    color: #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.email-item-date {
+    font-size: 0.75rem;
+    color: #777;
+    margin-top: 4px;
+}
+
+.email-reader {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.email-empty-state {
+    margin: auto;
+    color: #666;
+    font-style: italic;
+}
+
+.email-header {
+    border-bottom: 1px solid #282c37;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.email-header h3 {
+    color: #ffca28;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.email-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #a0a5b5;
+}
+
+.email-body {
+    line-height: 1.6;
+    color: #ddd;
+    font-size: 0.95rem;
+}
+
+/* Save slot selection modal */
+.slot-modal-overlay {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 11, 14, 0.95);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.slot-modal-content {
+    background: #181b22;
+    padding: 30px;
+    border-radius: 16px;
+    border: 2px solid #282c37;
+    text-align: center;
+    max-width: 850px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.slot-modal-content h2 {
+    font-size: 1.8rem;
+    color: #ffca28;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.slot-card {
+    background: #111317;
+    border: 2px solid #282c37;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.slot-card:hover {
+    border-color: #ffca28;
+    transform: translateY(-5px);
+}
+
+.slot-header {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    border-bottom: 1px solid #282c37;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.slot-info {
+    text-align: left;
+    font-size: 0.95rem;
+    color: #a0a5b5;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.slot-info strong {
+    color: #2ecc71;
+}
+
+.slot-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.slot-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.play-btn {
+    background: #2ecc71;
+    color: #111;
+}
+
+.play-btn:hover {
+    background: #27ae60;
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+}
+
+.slot-actions-secondary {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.export-btn,
+.import-btn {
+    flex: 1;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.72rem;
+    cursor: pointer;
+    background: #334155;
+    color: #cbd5e1;
+    transition: background 0.2s;
+}
+
+.export-btn:hover,
+.import-btn:hover {
+    background: #475569;
+}
+
+/* GAME OVER & WIN MODALLARI */
+.danger-title {
+    color: #e74c3c;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.win-title {
+    color: #f1c40f;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.game-over-content,
+.win-content {
+    text-align: center;
+    padding: 40px;
+}
+
+.game-over-content p,
+.win-content p {
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    color: #ccc;
+}
+
+/* Rarity color system and glow effects */
+.rarity-common {
+    border-bottom: 4px solid #b0bec5 !important;
+    box-shadow: 0 0 10px rgba(176, 190, 197, 0.25);
+}
+
+.rarity-uncommon {
+    border-bottom: 4px solid #2ecc71 !important;
+    box-shadow: 0 0 12px rgba(46, 204, 113, 0.35);
+}
+
+.rarity-rare {
+    border-bottom: 4px solid #3498db !important;
+    box-shadow: 0 0 14px rgba(52, 152, 219, 0.4);
+}
+
+.rarity-epic {
+    border-bottom: 4px solid #9b59b6 !important;
+    box-shadow: 0 0 16px rgba(155, 89, 182, 0.5);
+}
+
+.rarity-legendary {
+    border-bottom: 4px solid #f1c40f !important;
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.6);
+}
+
+/* Increased glow on hover */
+.content-card.rarity-common:hover,
+.vault-card.rarity-common:hover,
+.minifig-card.rarity-common:hover {
+    box-shadow: 0 0 18px rgba(176, 190, 197, 0.5);
+}
+
+.content-card.rarity-uncommon:hover,
+.vault-card.rarity-uncommon:hover,
+.minifig-card.rarity-uncommon:hover {
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.65);
+}
+
+.content-card.rarity-rare:hover,
+.vault-card.rarity-rare:hover,
+.minifig-card.rarity-rare:hover {
+    box-shadow: 0 0 22px rgba(52, 152, 219, 0.75);
+}
+
+.content-card.rarity-epic:hover,
+.vault-card.rarity-epic:hover,
+.minifig-card.rarity-epic:hover {
+    box-shadow: 0 0 25px rgba(155, 89, 182, 0.85);
+}
+
+.content-card.rarity-legendary:hover,
+.vault-card.rarity-legendary:hover,
+.minifig-card.rarity-legendary:hover {
+    box-shadow: 0 0 30px rgba(241, 196, 15, 0.95);
+}
+
+.rarity-badge.rarity-common {
+    background: #b0bec5;
+    color: #111;
+}
+
+.rarity-badge.rarity-uncommon {
+    background: #2ecc71;
+    color: #111;
+}
+
+.rarity-badge.rarity-rare {
+    background: #3498db;
+    color: #fff;
+}
+
+.rarity-badge.rarity-epic {
+    background: #9b59b6;
+    color: #fff;
+}
+
+.rarity-badge.rarity-legendary {
+    background: #f1c40f;
+    color: #111;
+}
+
+.rarity-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin: 5px 0;
+}
+
+/* KASALAR */
+.crates-section {
+    margin-bottom: 30px;
+}
+
+/* Crates are filtered by theme via the tab bar above (see renderCrates in app.js). */
+.crate-theme-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    max-width: 100%;
+    scrollbar-width: thin;
+}
+
+.crate-theme-tab { flex-shrink: 0; white-space: nowrap; }
+
+.crate-theme-tab {
+    background: #14171d;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: none;
+    padding: 10px 22px;
+    border-radius: 8px 8px 0 0;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.crate-theme-tab:hover {
+    color: #fff;
+}
+
+.crate-theme-tab.active {
+    background: #1e242e;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Panel attached beneath the tabs, styled as a "folder" that visually
+   continues from the tab bar above (top accent border). */
+.crate-tab-panel {
+    background: #1e242e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 2px solid #ffca28;
+    border-radius: 0 8px 8px 8px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.crate-tab-panel .crates-grid {
+    margin-top: 0;
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 6px;
+    /* Keeps the scrollbar from touching the cards */
+}
+
+.crate-tab-panel .crates-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.crate-tab-panel .crates-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.crate-tab-panel .crates-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.crate-tab-panel .crates-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.crates-grid,
+.contents-grid,
+.vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.crate-card,
+.content-card,
+.vault-card {
+    background: #181b22;
+    border: 2px solid #282c37;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.25s ease;
+}
+
+.crate-card:hover,
+.content-card:hover,
+.vault-card:hover {
+    transform: translateY(-3px);
+}
+
+.crate-card.active {
+    border-color: #ffca28;
+}
+
+/* Drop rate tooltip shown on crate hover.
+   Rather than embedded per card, this is a single shared #crate-drop-tooltip
+   element appended to <body>; its position is computed in JS and clamped
+   so it never renders off-screen. */
+.crate-tooltip {
+    position: fixed;
+    width: 160px;
+    background: #0f1115;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 5000;
+    text-align: left;
+    display: none;
+}
+
+.crate-tooltip.visible {
+    opacity: 1;
+}
+
+.crate-tooltip-title {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 6px;
+}
+
+.crate-tooltip-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 0;
+}
+
+.crate-tooltip-row .rarity-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    margin: 0;
+}
+
+.crate-tooltip-pct {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.crate-card img,
+.content-card img,
+.vault-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.content-card .odds {
+    font-size: 0.8rem;
+    color: #ffca28;
+    margin-top: 3px;
+}
+
+/* CONTROL & RULET ALANI */
+.controls-section {
+    text-align: center;
+    margin: 30px 0;
+    background: #181b22;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #282c37;
+}
+
+.roulette-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 160px;
+    margin: 20px auto;
+    background: #111317;
+    border: 2px solid #282c37;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.pointer {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: #ffca28;
+    box-shadow: 0 0 12px #ffca28;
+    z-index: 10;
+}
+
+.roulette-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.roulette-strip {
+    display: flex;
+    gap: 10px;
+    padding: 0 10px;
+    will-change: transform;
+}
+
+.minifig-card {
+    min-width: 120px;
+    height: 140px;
+    background: #181b22;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    box-sizing: border-box;
+    transition: box-shadow 0.25s ease;
+}
+
+.minifig-card img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+}
+
+.minifig-card .name {
+    font-size: 0.8rem;
+    margin-top: 6px;
+    text-align: center;
+    color: #ddd;
+}
+
+/* Prevents the browser's native text-selection highlight from appearing
+   during rapid clicks in the pack reveal flow (name, value, etc). */
+#bundle-reveal-modal,
+#bundle-reveal-modal * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Bundle reveal (pack opening) */
+.bundle-reveal-card {
+    min-width: 220px;
+    width: 220px;
+    height: 220px;
+    padding: 16px;
+}
+
+.bundle-reveal-card img {
+    width: 130px;
+    height: 130px;
+}
+
+.bundle-reveal-card .name {
+    font-size: 0.95rem;
+}
+
+.bundle-reveal-card.pop-in {
+    animation: bundleRevealPop 0.45s ease-out;
+}
+
+/* Static, non-distracting look when Settings > Reduce Motion is on */
+body.reduce-motion .bundle-reveal-card.pop-in {
+    animation: none;
+}
+
+.bundle-overview-card {
+    width: 100%;
+    min-width: 0;
+    height: 140px;
+    padding: 10px;
+}
+
+.bundle-overview-card img {
+    width: 64px;
+    height: 64px;
+}
+
+.bundle-overview-card .name {
+    font-size: 0.78rem;
+    line-height: 1.2;
+    margin-top: 6px;
+    max-height: 2.4em;
+    overflow: hidden;
+}
+
+.bundle-overview-card .overview-value {
+    font-size: 0.85rem;
+    color: #38ef7d;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+/* Keeps cards readable even in larger packs (e.g. 10-figure) -
+   only slightly shrunk, never too small to read. */
+.bundle-overview-card.compact {
+    height: 118px;
+    padding: 8px;
+}
+
+.bundle-overview-card.compact img {
+    width: 52px;
+    height: 52px;
+}
+
+.bundle-overview-card.compact .name {
+    font-size: 0.68rem;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.bundle-overview-card.compact .overview-value {
+    font-size: 0.75rem;
+}
+
+@keyframes bundleRevealPop {
+    0% {
+        transform: scale(0.4) rotate(-8deg);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.08) rotate(2deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+#spin-btn {
+    background: #2ecc71;
+    color: #111;
+    border: none;
+    padding: 14px 40px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#spin-btn:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* VAULT & MODAL */
+.stack-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffca28;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-sell-all {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: #181b22;
+    padding: 25px;
+    border-radius: 10px;
+    position: relative;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid #282c37;
+}
+
+/* Ensures the inspect modal can still render above the bundle reveal
+   modal (z-index: 10001) by bumping it to a higher layer. */
+#inspect-modal {
+    z-index: 10002;
+}
+
+.bundle-overview-card {
+    cursor: pointer;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.inspect-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.zoom-box img {
+    width: 120px;
+}
+
+.btn-action {
+    margin-top: 8px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background: #2ecc71;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: #fff;
+}
+
+/* Hide the native up/down arrows on number inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+#modal-img {
+    max-height: 220px;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto 10px auto;
+    display: block;
+}
+
+#modal-sell-controls {
+    gap: 14px !important;
+    margin-top: 18px !important;
+}
+
+#sell-quantity-input {
+    width: 80px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+    font-weight: bold;
+}
+
+#modal-sell-controls .action-btn,
+#modal-sell-custom-btn,
+#modal-sell-all-btn {
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+#modal-sell-custom-btn:hover,
+#modal-sell-all-btn:hover {
+    filter: brightness(1.1);
+}
+
+#modal-sell-custom-btn:active,
+#modal-sell-all-btn:active {
+    transform: scale(0.97);
+}
+
+/* BANK APP MODERN UI & LAYOUT FIXES */
+.pc-window-body {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#bank-app-content {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    max-height: 520px;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.bank-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    width: 100%;
+}
+
+.active-loans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Scrollbar Design */
+#bank-app-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+#bank-app-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+#bank-app-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+#bank-app-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* COLLECTOR OFFERS APPLICATION */
+.offer-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.offer-card img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.offer-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.offer-collector {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.offer-fig-name {
+    font-size: 0.88rem;
+    color: #fff;
+    font-weight: bold;
+    margin: 2px 0 4px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.offer-flavor {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.offer-need {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    margin-top: 4px;
+}
+
+.offer-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.offer-price {
+    color: #38ef7d;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.offer-fulfill-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #2ecc71;
+    color: #06210f;
+    font-weight: bold;
+    font-size: 0.78rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.offer-fulfill-btn:hover {
+    background: #27ae60;
+}
+
+.offer-fulfill-btn:disabled {
+    background: #334155;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+/* Collector Offers: Single / Multi alt sekmeleri */
+.offers-subtab-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #1e293b;
+    color: #94a3b8;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: background 0.2s, color 0.2s;
+}
+
+.offers-subtab-btn.active {
+    background: #334155;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.offer-card-multi {
+    align-items: flex-start;
+}
+
+.offer-multi-req-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.offer-multi-req-row img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.offer-multi-req-name {
+    flex: 1;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.offer-multi-req-count {
+    font-size: 0.72rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* COLLECTOR MARKET (BORSA) APPLICATION */
+.market-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.market-row:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.market-row img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.market-row-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.market-row-name {
+    font-size: 0.75rem;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 2px;
+}
+
+.market-row-info .rarity-badge {
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    margin: 0;
+}
+
+.market-row-value {
+    text-align: right;
+    flex-shrink: 0;
+    font-size: 0.82rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Daily login / streak indicator */
+.daily-streak-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #64748b;
+}
+
+.daily-streak-dot.filled {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: #06210f;
+}
+
+.daily-streak-dot.today {
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
+}
+
+/* Daily login reward modal - 12-day calendar preview */
+.daily-calendar-cell {
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 14px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+.daily-calendar-day {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+.daily-calendar-reward {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #cbd5e1;
+    white-space: nowrap;
+}
+
+.daily-calendar-cell.claimed {
+    background: rgba(46, 204, 113, 0.12);
+    border-color: rgba(46, 204, 113, 0.4);
+}
+
+.daily-calendar-cell.claimed .daily-calendar-reward {
+    color: #38ef7d;
+}
+
+.daily-calendar-cell.today {
+    box-shadow: 0 0 0 2px #ffd700;
+    transform: scale(1.06);
+}
+
+.daily-calendar-cell.future {
+    opacity: 0.55;
+}
+
+.daily-calendar-cell.jackpot {
+    background: rgba(255, 215, 0, 0.12);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+.daily-calendar-cell.jackpot .daily-calendar-reward {
+    color: #ffd700;
+}
+
+.daily-calendar-cell.item-rare {
+    background: rgba(52, 152, 219, 0.15);
+    border-color: rgba(52, 152, 219, 0.5);
+}
+
+.daily-calendar-cell.item-rare .daily-calendar-reward {
+    color: #5dade2;
+}
+
+.daily-calendar-cell.item-epic {
+    background: rgba(155, 89, 182, 0.15);
+    border-color: rgba(155, 89, 182, 0.5);
+}
+
+.daily-calendar-cell.item-epic .daily-calendar-reward {
+    color: #c39bd3;
+}
+
+.daily-calendar-check {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2ecc71;
+    color: #06210f;
+    font-size: 0.6rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ACHIEVEMENTS APPLICATION */
+.achievement-card {
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px 10px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.15s ease;
+}
+
+.achievement-card.locked {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+.achievement-card.unlocked {
+    border-color: rgba(255, 215, 0, 0.4);
+    background: rgba(255, 215, 0, 0.06);
+}
+
+.achievement-card.unlocked:hover {
+    transform: translateY(-2px);
+}
+
+.achievement-icon {
+    font-size: 2.1rem;
+    line-height: 1;
+}
+
+.achievement-name {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 4px;
+}
+
+.achievement-desc {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    line-height: 1.3;
+}
+
+.achievement-reward {
+    font-size: 0.72rem;
+    color: #38ef7d;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.achievement-lock {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.85rem;
+}
+
+/* Showcase - PC app */
+.showcase-slot-card {
+    background: #181b22;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-height: 140px;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.showcase-slot-card:hover {
+    border-color: rgba(255, 215, 0, 0.55);
+}
+
+.showcase-slot-card img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.showcase-slot-card .name {
+    font-size: 0.75rem;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.showcase-slot-card.empty {
+    border-style: dashed;
+    color: #64748b;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.showcase-slot-card.empty:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+}
+
+.showcase-remove-btn {
+    margin-top: 4px;
+    font-size: 0.68rem;
+    color: #e74c3c;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+}
+
+.showcase-remove-btn:hover {
+    text-decoration: underline;
+}
+
+/* Minifig picker list for selecting items to showcase */
+.showcase-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.showcase-picker-item:hover {
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.showcase-picker-item img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.showcase-picker-item .name {
+    flex: 1;
+    font-size: 0.78rem;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* BrickBid Live (auction) */
+.auction-feed-entry {
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.auction-feed-entry.you {
+    color: #38ef7d;
+    font-weight: bold;
+}
+
+.auction-bid-btn {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 8px;
+    background: #334155;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.15s ease;
+}
+
+.auction-bid-btn:hover {
+    background: #475569;
+}
+
+.auction-price-preset-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    background: #181b22;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.auction-price-preset-btn:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+}
+
+/* Theme Mastery panel - inside Showcase */
+.theme-mastery-card {
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+}
+
+.theme-mastery-card.completed {
+    border-color: rgba(56, 239, 125, 0.4);
+    background: rgba(56, 239, 125, 0.06);
+}
+
+.theme-mastery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.theme-mastery-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.theme-mastery-status {
+    font-size: 0.72rem;
+    font-weight: bold;
+}
+
+.theme-mastery-status.done {
+    color: #38ef7d;
+}
+
+.theme-mastery-status.progress {
+    color: #94a3b8;
+}
+
+.theme-mastery-bar-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.theme-mastery-bar-fill {
+    height: 100%;
+    background: #38ef7d;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* STATISTICS APPLICATION */
+.stat-card {
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-icon {
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.stat-value {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+/* Market Conditions (theme states) - inside the Market app */
+.market-condition-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #181b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+}
+
+.market-condition-theme {
+    font-size: 0.8rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+.market-condition-badge {
+    font-size: 0.72rem;
+    font-weight: bold;
+    padding: 3px 10px;
+    border: 1px solid;
+    border-radius: 12px;
+}
+/* ==========================================================================
+   Two-column game layout on wide screens
+   Left: crate picker. Right: roulette + open button (always visible) and
+   drop odds. Everything fits in one viewport at 100% zoom; narrow screens
+   keep the original stacked layout.
+   ========================================================================== */
+@media (min-width: 880px) {
+    #crates-tab.tab-content {
+        max-width: 1480px;
+        padding: 20px 28px;
+        /* keep clear of the floating "PC" button on the left edge */
+        padding-left: max(28px, calc(140px - max(0px, (calc(var(--vw1, 1vw) * 100) - 1480px) / 2)));
+    }
+
+    #crates-tab.tab-content.active {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        column-gap: 24px;
+        height: calc(calc(var(--vh1, 1vh) * 100) - var(--topbar-h, 70px));
+        min-height: 400px;
+        box-sizing: border-box;
+    }
+
+    #crates-tab .crates-section {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    #crates-tab .crates-section h3 { margin-top: 0; }
+
+    #crates-tab #crates-list {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+    }
+
+    #crates-tab .crate-theme-tabs {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        gap: 4px 4px;
+    }
+
+    #crates-tab .crate-theme-tab {
+        padding: 8px 14px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    #crates-tab .crate-tab-panel {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+        padding: 14px;
+    }
+
+    #crates-tab .crate-tab-panel .crates-grid {
+        flex: 1;
+        max-height: none;
+        min-height: 0;
+        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+        gap: 12px;
+        align-content: start;
+    }
+
+    #crates-tab .crate-card { padding: 10px 8px; }
+    #crates-tab .crate-card img { width: 64px; height: 64px; }
+
+    #crates-tab .controls-section {
+        grid-column: 2;
+        grid-row: 1;
+        margin: 0 0 16px;
+        padding: 16px 20px;
+    }
+
+    #crates-tab .controls-section h2 {
+        margin: 0;
+        font-size: 1.35rem;
+    }
+
+    #crates-tab .roulette-container {
+        max-width: none;
+        margin: 14px auto;
+    }
+
+    #crates-tab .crate-contents-section {
+        grid-column: 2;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    #crates-tab .crate-contents-section h3 { margin: 0 0 4px; }
+
+    #crates-tab .contents-grid {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+        gap: 10px;
+        align-content: start;
+        padding: 4px 6px 4px 0;
+        scrollbar-width: thin;
+    }
+
+    #crates-tab .content-card { padding: 8px 6px; }
+    #crates-tab .content-card img { width: 56px; height: 56px; }
+}
+
+/* Short laptop screens (e.g. 1366x768): tighten vertical spacing */
+@media (min-width: 880px) and (max-height: 820px) {
+    #crates-tab .roulette-container { height: 140px; margin: 10px auto; }
+    #crates-tab .minifig-card { height: 124px; }
+    #crates-tab .minifig-card img { width: 64px; height: 64px; }
+    #crates-tab .controls-section { padding: 12px 18px; margin-bottom: 12px; }
+}
+
+/* Phones: let the top bar wrap instead of pushing the page sideways */
+@media (max-width: 600px) {
+    .top-bar {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        padding: 12px 16px;
+    }
+    .tab-content { padding: 20px 16px; }
+
+    /* compact PC button in the bottom-left corner instead of mid-screen */
+    .pc-launcher-fixed {
+        top: auto;
+        bottom: 16px;
+        left: 16px;
+        transform: none;
+        border-left: 2px solid #ffca28;
+        border-radius: 12px;
+        padding: 10px 14px;
+        gap: 2px;
+    }
+    .pc-launcher-fixed:hover { padding-left: 14px; }
+    .pc-launcher-fixed .pc-icon { font-size: 1.2rem; }
+    .pc-launcher-fixed .pc-text { display: none; }
+}
+
+
+/* ==========================================================================
+   Small / short screens (laptops with 125–175% Windows scaling report
+   viewports like 1280x600 or 1030x460 at 100% browser zoom)
+   ========================================================================== */
+
+/* Every dialog fits the screen and scrolls inside instead of being cut off */
+.modal > div,
+.modal-content,
+.slot-modal-content {
+    max-height: calc(calc(var(--vh1, 1vh) * 100) - 24px);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.pc-app-content {
+    height: min(550px, calc(calc(var(--vh1, 1vh) * 100) - 24px));
+    overflow: hidden !important;
+}
+#bank-app-content { max-height: none; }
+#modal-img { max-height: min(220px, calc(var(--vh1, 1vh) * 32)); }
+
+/* Narrower desktop: tighter side padding, PC button clearance kept */
+@media (min-width: 880px) and (max-width: 1180px) {
+    #crates-tab.tab-content { column-gap: 16px; padding-right: 16px; padding-left: 120px; }
+    .pc-launcher-fixed { padding: 12px 14px; }
+    .pc-launcher-fixed .pc-icon { font-size: 1.4rem; }
+    .pc-launcher-fixed .pc-text { font-size: 0.7rem; }
+}
+
+/* Inventory tab: keep cards clear of the floating PC button */
+@media (min-width: 601px) {
+    #vault-tab.tab-content { padding-left: max(30px, calc(130px - max(0px, (calc(var(--vw1, 1vw) * 100) - 1200px) / 2))); }
+}

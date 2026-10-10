@@ -1,0 +1,67 @@
+theme,crate_id,crate_name,image,cost,weights
+CMF,cmf_001,CMF Series 1,,23,70/22/7.6/0.4
+CMF,cmf_002,CMF Series 2,,16,70/22/7.6/0.4
+CMF,cmf_003,CMF Series 3,,,70/22/7.6/0.4
+CMF,cmf_004,CMF Series 4,,,70/22/7.6/0.4
+CMF,cmf_005,CMF Series 5,,,70/22/7.6/0.4
+CMF,cmf_006,CMF Series 6,,,70/22/7.6/0.4
+CMF,cmf_007,CMF Series 7,,,70/22/7.6/0.4
+CMF,cmf_008,CMF Series 8,,,70/22/7.6/0.4
+CMF,cmf_009,CMF Series 9,,,70/22/7.6/0.4
+CMF,cmf_010,CMF Series 10,,,70/22/7.6/0.4
+CMF,cmf_011,CMF Series 11,,,70/22/7.6/0.4
+CMF,cmf_012,CMF Series 12,,,70/22/7.6/0.4
+CMF,cmf_013,CMF Series 13,,,70/22/7.6/0.4
+CMF,cmf_014,CMF Series 14,,,70/22/7.6/0.4
+CMF,cmf_015,CMF Series 15,,,70/22/7.6/0.4
+CMF,cmf_016,CMF Series 16,,,70/22/7.6/0.4
+CMF,cmf_017,CMF Series 17,,,70/22/7.6/0.4
+CMF,cmf_018,CMF Series 18,,,70/22/7.6/0.4
+CMF,cmf_019,CMF Series 19,,,70/22/7.6/0.4
+CMF,cmf_020,CMF Series 20,,,70/22/7.6/0.4
+CMF,cmf_021,CMF Series 21,,,70/22/7.6/0.4
+CMF,cmf_022,CMF Series 22,,,70/22/7.6/0.4
+CMF,cmf_023,CMF Series 23,,,70/22/7.6/0.4
+CMF,cmf_024,CMF Series 24,,,70/22/7.6/0.4
+CMF,cmf_025,CMF Series 25,,,70/22/7.6/0.4
+CMF,cmf_026,CMF Series 26,,,70/22/7.6/0.4
+CMF,cmf_027,CMF Series 27,,,70/22/7.6/0.4
+CMF,cmf_028,CMF Series 28,,,70/22/7.6/0.4
+CMF,cmf_029,CMF Series 29,,,70/22/7.6/0.4
+Adventurers,adv_001,Adventurers: Desert (1998),,,70/22/7.6/0.4
+Adventurers,adv_002,Adventurers: Jungle & Dino Island (1999–2000),,,70/22/7.6/0.4
+Adventurers,adv_003,Adventurers: Orient Expedition (2003),,,70/22/7.6/0.4
+Ninjago,nin_001,Ninjago: The Golden Weapons (2011),,,70/22/7.6/0.4
+Ninjago,nin_002,Ninjago: Rise of the Snakes (2012),,,70/22/7.6/0.4
+Ninjago,nin_003,Ninjago: The Final Battle (2013),,,70/22/7.6/0.4
+Ninjago,nin_004,Ninjago: Rebooted (2014),,,70/22/7.6/0.4
+Ninjago,nin_005,Ninjago: Tournament of Elements (2015),,,70/22/7.6/0.4
+Ninjago,nin_006,Ninjago: Possession (2015),,,70/22/7.6/0.4
+Ninjago,nin_007,Ninjago: Skybound (2016),,,70/22/7.6/0.4
+Ninjago,nin_008,Ninjago: The Hands of Time (2017),,,70/22/7.6/0.4
+Ninjago,nin_009,Ninjago: Sons of Garmadon (2018),,,70/22/7.6/0.4
+Ninjago,nin_010,Ninjago: Prime Empire (2020),,,70/22/7.6/0.4
+Castle,cas_001,"Castle: Classic, Crusaders & Black Falcons (1978–1990)",,,70/22/7.6/0.4
+Castle,cas_002,"Castle: Forestmen, Black Knights & Wolfpack (1987–1993)",,,70/22/7.6/0.4
+Castle,cas_003,"Castle: Dragon Masters, Royal Knights, Dark Forest & Fright Knights (1993–1997)",,,70/22/7.6/0.4
+Castle,cas_004,Castle: Knights' Kingdom I & II (2000–2006),,,70/22/7.6/0.4
+Castle,cas_005,Castle: Fantasy Era & Kingdoms (2007–2012),,,70/22/7.6/0.4
+Pirates,pir_001,Pirates: Pirates I & Imperial Soldiers (1989–1991),,,70/22/7.6/0.4
+Pirates,pir_002,"Pirates: Imperial Guards, Islanders & Armada (1992–1997)",,,70/22/7.6/0.4
+Pirates,pir_003,Pirates (2009): Pirates & Imperial Soldiers II,,,70/22/7.6/0.4
+Pirates,pir_004,Pirates (2015): Pirates & Bluecoats,,,70/22/7.6/0.4
+Space,spc_001,Space: Classic Space (1978–1987),,,70/22/7.6/0.4
+Space,spc_002,Space: Futuron & Blacktron I (1987–1991),,,70/22/7.6/0.4
+Space,spc_003,"Space: M:Tron, Blacktron II, Space Police & Ice Planet (1989–1993)",,,70/22/7.6/0.4
+Space,spc_004,Space: Spyrius to Insectoids (1994–1998),,,70/22/7.6/0.4
+Space,spc_005,"Space: Space Police III, Alien Conquest & Galaxy Squad (2009–2013)",,,70/22/7.6/0.4
+City,cty_001,Town: Classic Town (1978–1994),,,70/22/7.6/0.4
+City,cty_002,City: Police (2011),,,70/22/7.6/0.4
+City,cty_003,City: Fire (2013),,,70/22/7.6/0.4
+Atlantis,atl_001,Atlantis (2010–2011),,,70/22/7.6/0.4
+Monster Fighters,mof_001,Monster Fighters (2012),,,70/22/7.6/0.4
+Friends,frn_001,Friends: Heartlake City (2012),,,70/22/7.6/0.4
+Friends,frn_002,Friends: Heartlake City (2014),,,70/22/7.6/0.4
+Friends,frn_003,Friends: Heartlake City (2016),,,70/22/7.6/0.4
+Friends,frn_004,Friends: Heartlake City (2018),,,70/22/7.6/0.4
+Friends,frn_005,Friends: Heartlake City (2020),,,70/22/7.6/0.4
