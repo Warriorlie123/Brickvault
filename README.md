@@ -6,7 +6,7 @@ a small simulation of **probability, markets and patience**.
 > **Just for fun.** No real money, no purchases, no prizes. BrickVault is not affiliated
 > with the LEGO Group. See [DISCLAIMER.md](DISCLAIMER.md).
 
-**▶ Play:** [warriorlie123.github.io/brickvault](https://warriorlie123.github.io/brickvault/)
+**▶ Play:** [omerburhan.com/brickvault](https://omerburhan.com/brickvault/)
 
 <!-- Add a screenshot or GIF here: ![BrickVault gameplay](docs/screenshot.gif) -->
 
